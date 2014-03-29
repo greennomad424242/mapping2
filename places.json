@@ -1,0 +1,22 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+
+
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 1, "featurecla": "Admin-0 capital", "name": "Beijing", "nameascii": "Beijing", "adm0name": "China", "adm0_a3": "CHN", "adm1name": "Beijing", "iso_a2": "CN", "note": null, "latitude": 39.928892231299997, "longitude": 116.388285684, "changed": 0.0, "namediff": 0, "diffnote": null, "pop_max": 11106000, "pop_min": 7480601, "pop_other": 9033231, "rank_max": 14, "rank_min": 13, "geonameid": 1816670.0, "meganame": "Beijing", "ls_name": "Beijing", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 116.386339825659434, 39.930838089909059 ] } }
+,
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 1, "featurecla": "Admin-0 capital", "name": "Jakarta", "nameascii": "Jakarta", "adm0name": "Indonesia", "adm0_a3": "IDN", "adm1name": "Jakarta Raya", "iso_a2": "ID", "note": null, "latitude": -6.17441770541, "longitude": 106.829437621, "changed": 0.0, "namediff": 0, "diffnote": null, "pop_max": 9125000, "pop_min": 8540121, "pop_other": 9129613, "rank_max": 13, "rank_min": 13, "geonameid": 1642911.0, "meganame": "Jakarta", "ls_name": "Jakarta", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 106.827491762470117, -6.172471846798885 ] } }
+,
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 1, "featurecla": "Admin-1 capital", "name": "Shanghai", "nameascii": "Shanghai", "adm0name": "China", "adm0_a3": "CHN", "adm1name": "Shanghai", "iso_a2": "CN", "note": null, "latitude": 31.216452452599999, "longitude": 121.436504678, "changed": 0.0, "namediff": 0, "diffnote": null, "pop_max": 14987000, "pop_min": 14608512, "pop_other": 16803572, "rank_max": 14, "rank_min": 14, "geonameid": 1796236.0, "meganame": "Shanghai", "ls_name": "Shanghai", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 121.434558819820154, 31.218398311228327 ] } }
+,
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 2, "featurecla": "Admin-0 capital", "name": "Tokyo", "nameascii": "Tokyo", "adm0name": "Japan", "adm0_a3": "JPN", "adm1name": "Tokyo", "iso_a2": "JP", "note": null, "latitude": 35.685016905799998, "longitude": 139.751407429000011, "changed": 0.0, "namediff": 0, "diffnote": null, "pop_max": 35676000, "pop_min": 8336599, "pop_other": 12945252, "rank_max": 14, "rank_min": 13, "geonameid": 1850147.0, "meganame": "Tokyo", "ls_name": "Tokyo", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 139.749461570544668, 35.686962764371174 ] } }
+,
+
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 1, "featurecla": "Admin-1 capital", "name": "Kolkata", "nameascii": "Kolkata", "adm0name": "India", "adm0_a3": "IND", "adm1name": "West Bengal", "iso_a2": "IN", "note": null, "latitude": 22.494969298299999, "longitude": 88.324675658100006, "changed": 4.0, "namediff": 1, "diffnote": "Name changed. Changed scale rank.", "pop_max": 14787000, "pop_min": 4631392, "pop_other": 7783716, "rank_max": 14, "rank_min": 12, "geonameid": 1275004.0, "meganame": "Kolkata", "ls_name": "Calcutta", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 88.32272979950551, 22.496915156896421 ] } }
+
+,
+{ "type": "Feature", "properties": { "scalerank": 0, "labelrank": 0, "featurecla": "Admin-0 region capital", "name": "Hong Kong", "nameascii": "Hong Kong", "adm0name": "Hong Kong S.A.R.", "adm0_a3": "HKG", "adm1name": null, "iso_a2": "HK", "note": null, "latitude": 22.304980895, "longitude": 114.185009317, "changed": 0.0, "namediff": 0, "diffnote": null, "pop_max": 7206000, "pop_min": 4551579, "pop_other": 4549026, "rank_max": 13, "rank_min": 12, "geonameid": 1819729.0, "meganame": "Hong Kong", "ls_name": "Hong Kong", "ls_match": 1, "checkme": 0 }, "geometry": { "type": "Point", "coordinates": [ 114.183063458463039, 22.30692675357551 ] } }
+
+]
+}

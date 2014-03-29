@@ -1,0 +1,41 @@
+<html>
+
+<head>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+</head>
+
+
+
+<body>
+<script>
+console.log("step 1");
+var deferred = $.Deferred();
+var deferred2 = $.Deferred();
+
+
+deferred.done(function(value) {
+   console.log("step 4");
+   setTimeout(function(){
+      deferred2.resolve();
+   },4000);
+   
+});
+
+deferred2.done(function(value) {
+   console.log("step 5");
+
+});
+
+
+console.log("step 3");
+
+deferred.resolve("hello world");
+
+console.log("step 6");
+
+</script>
+
+
+</body></html>

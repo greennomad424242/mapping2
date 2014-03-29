@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+<title></title>
+<script src="/bower_components/d3/d3.min.js" charset="utf-8"></script>
+<script src="/bower_components/topojson/topojson.js" charset="utf-8"></script>
+<link rel="stylesheet" href="/bower_components/simple-map-d3/dist/simple-map-d3.css">
+<script src="/bower_components/simple-map-d3/dist/simple-map-d3.js" charset="utf-8"></script>
+</head>
+<body>
+<div id="simple-map-d3-example"></div>
+<script>
+
+var map = new SimpleMapD3({
+    container: '#simple-map-d3-example',
+    datasource: 'mn-county-2010.geo.json'
+  });
+  
+  var mnPopMap = SimpleMapD3({
+    container: '.simple-map-d3-mn-pop-map',
+    datasource: 'example-data/mn-county-2010.geo.json',
+    colorOn: true,
+    colorProperty: 'POPULATION',
+    legendFormatter: d3.format(',f0')
+  });
+
+
+</script>

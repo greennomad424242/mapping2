@@ -1,0 +1,359 @@
+<html>
+<head><title>Choropleths</title>
+<style>
+.main {
+  float: left; 
+ 
+}
+
+
+.footer {
+    height: 295px;
+   width: 900px; 
+    float: left; 
+     background: white ;
+}
+.sidebar {
+   height: 495px;
+   width: 170px;
+   float: left;
+   padding: 2px;  
+   background: #F0F0F0 ;
+   border: 1px;      
+   border-radius: 8px;  
+   border-color: #000;
+   overflow: hidden;
+}
+
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 150px;                  
+  height: 30px;                 
+  padding: 15px;             
+  font-size: 14px;
+  line-height: 15px;     
+  background: #F0F0F0; 	 
+ -webkit-border-radius: 5px;
+-moz-border-radius: 5px;
+border-radius: 5px;
+    border: 1px solid #BADA55;
+   border-color: #000;        
+  pointer-events: none;         
+}   
+
+</style>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div>
+<div id="title"><h2>Choropleth Demo</h2>
+</div>
+<select>
+
+     <option value="Population">Population</option> 
+     <option value="Employment">Employment</option>   
+</select>
+
+</div>
+
+<div class="main">
+
+<div class='gallery' id='chart'></div></div>
+<div class="sidebar"></div>
+<div class="footer"></div>
+
+<link href="choropleth.css" rel="stylesheet" type="text/css"><link href="colorbrewer.css" rel="stylesheet" type="text/css"><script src="d3.geo.js" type="text/javascript"> </script>
+<script>
+
+  var last_state = null;  
+  var data; // loaded asynchronously
+  var data3;
+  var data4;
+ 
+  var dataset =[];  //TO DO: provide useful variable names
+  var dataset2 =[];
+  var dataset4 =[];
+  var pop_data =[];
+  var zipdata = []; //stores the zips and population information 
+  var state_data =[];   
+  var path = d3.geo.path();
+  var myJsonString;
+  var svg = d3.select("#chart")
+    .append("svg:svg")
+    .attr("id","primary");
+    
+
+   var data5 = {};
+   
+    
+    
+  var svg2 = d3.select("#chart")
+    .append("svg:svg")
+    .attr("id","secondary");
+  var counties = svg.append("svg:g")
+     .attr("id", "counties")
+     .attr("class", "Blues");
+  var counties2 = svg2.append("svg:g")
+     .attr("id", "counties")
+     .attr("class", "Greens");     
+                    
+ var div = d3.select("body").append("div")   
+  .attr("class", "tooltip")               
+  .style("opacity", 0); 
+
+ var states = svg.append("svg:g")
+     .attr("id", "states");
+
+  var states2 = svg2.append("svg:g")
+     .attr("id", "states");
+ 
+ 
+ function getInitial() { 
+  var deferred2 = $.Deferred();    
+   d3.csv("zip_fips.csv", function(error, data3) {       
+    data3.forEach(function(d) {
+       zipdata.push([ d.ZCTA5, d.GEOID]);
+       } );
+       
+     deferred2.resolve();
+    console.log("Loaded ZIP Codes");   
+       
+    });
+     return deferred2.promise();
+} 
+  
+ 
+ 
+ 
+ function getCore() {
+  var deferred = $.Deferred();
+ 
+    $.when(getInitial() ).done(function(value) { 
+        d3.json("unemployment.json", function(json) {
+      data = json;
+      counties.selectAll("path")
+              .attr("class", quantize);
+    
+       counties2.selectAll("path")
+               .attr("class", quantize_pop);     
+        
+      console.log("Loaded unemployment");             
+   });
+       
+            
+     d3.tsv("names2.txt", function(error, data2) {  
+          data2.forEach(function(d) {
+             var myString = d.id;
+             var newString = myString.substr(1, myString.length-2); 
+             dataset.push([newString,d.County, d.State,1]);
+          }); 
+          console.log("Loaded names");   
+             deferred.resolve();
+      });
+      
+
+});
+   return deferred.promise();
+}
+ 
+ 
+
+ $.when( getCore() ).done(function(value) {
+     console.log("Map the counties"); 
+    
+    d3.json("us-counties.json", function(json) {  
+   
+      counties2.selectAll("path")
+       .data(json.features)
+       .enter()
+       .append("svg:path")
+       .attr("class",  data5 ? quantize_pop : null)
+       .attr("d", path);
+      
+   
+   counties.selectAll("path")
+       .data(json.features)
+       .enter()
+       .append("svg:path")
+       .attr("class", data ? quantize : null)
+       .attr("svg:id", idit )
+       .attr("d", path)
+    .on("mouseover", function(d) {   
+        var target =  d.id;
+        var rate;
+        var temp;
+        var county_name;
+        // this is the popup tooltip  
+        // find the data for the element that's moused over
+        for(var i = 0, len = dataset.length; i < len; i++){
+           if(dataset[i][0] === d.id){
+            county = dataset[i][1];
+            state = dataset[i][2];
+            rate = dataset[i][3];  
+            popup_text = county + "</span><br>" + rate+ "%";
+            break;
+           }
+         }
+        
+          // if we're looking at the same state, no need 
+          // to change the sidebar.  Otherwise, update the text
+        if (last_state !== state) {  
+           last_state = state;  
+           state_data =[];
+           // find all the counties in that state
+           for(var i = 0, len = dataset.length; i < len; i++){ 
+               if(dataset[i][2] === state) {
+                   /// we use a temporary array for all the state info 
+                   state_data.push([dataset[i][1],dataset[i][3]]);  
+               }
+           }    
+      
+        // sort the states by severity 
+           state_data.sort(function(a, b) { 
+                return (a[1] > b[1] ? -1 : (a[1] < b[1] ? 1 : 0)); 
+            });
+        // write the state info out to the sidebar 
+            var state_text = "<strong>"+state + "</strong> (" 
+              + state_data.length 
+              + " counties):<br>";      
+                        
+           for(var i = 0, len =  state_data.length; i < len; i++){
+                state_text  = state_text + "<li>" 
+                     +  state_data[i][0] + " "  
+                     + state_data[i][1] + "%" ;  
+            }    
+   
+          d3.select(".sidebar").html(state_text);                           
+       }                            
+                                                      
+    // this updates the popup element                                                                     
+    d3.select(this)
+       .transition()
+       .duration(100)
+       .style("opacity", 0.5);
+       
+    div.transition()
+       .duration(100)
+       .style("opacity", 1);
+       
+    div.html(popup_text)
+       .style("left", (d3.event.pageX+30) + "px")
+       .style("top", (d3.event.pageY -30) + "px");      
+    }) 
+    
+  .on("mouseout", function() {
+      d3.select(this)
+        .transition().duration(100)
+        .style("opacity", 1);
+      div.transition().duration(100)
+       .style("opacity", 0);
+  }); 
+
+  // this merges the names and the rate information       
+  for(var i = 0, len = dataset.length; i < len; i++){ 
+        target_id = dataset[i][0];
+         for (var q = 0, len2 = dataset2.length; q < len2; q++){ 
+             if (dataset2[q][0] === target_id) {
+                dataset[i][3] = dataset2[q][1];
+                break;  
+             }                              
+         }
+   }                                              
+ });
+ 
+ }).then(function(){
+
+  d3.csv("population_density.csv", function(error, data4) {       
+    data4.forEach(function(d) {
+       pop_data.push([d.GEOID,d.NAME,d.POP10,d.SQMI,d.DENSITY]);
+     });
+     console.log("Population data loaded");
+     
+       for(var i = 0, len = dataset.length; i < len; i++){ 
+        target_id = dataset[i][0];
+         for (var q = 0, len2 = pop_data.length; q < len2; q++){ 
+             if (pop_data[q][0] === target_id) {
+                dataset[i][4] = pop_data[q][4];
+                dataset[i][5] = pop_data[q][3];
+                 var key = target_id;
+                 data5[key] = pop_data[q][4];            
+                break;  
+             }                              
+         }
+       }      
+     
+  });
+ });
+ 
+ // this loads the SVG for the states 
+ d3.json("us-states.json", function(json) {
+   states.selectAll("path")
+       .data(json.features)
+     .enter().append("svg:path")
+       .attr("d", path);
+    states2.selectAll("path")
+       .data(json.features)
+     .enter().append("svg:path")
+       .attr("d", path);    
+       
+    states2.selectAll("path")
+       .data(json.features)
+     .enter().append("svg:path")
+       .attr("d", path);
+    states2.selectAll("path")
+       .data(json.features)
+     .enter().append("svg:path")
+       .attr("d", path);              
+                                                                  $("#secondary").show();                                                     $("#primary").hide();        
+ });
+
+function idit(d) {
+   return d.id;
+ }
+ 
+function idrate(d) {
+   return data[d.id];
+}
+ 
+function quantize(d) {
+    dataset2.push([d.id,data[d.id]]);
+   return "q" + Math.min(8, ~~(data[d.id] * 9 / 12)) + "-9";
+ }
+ 
+ 
+function quantize_pop(d) {
+     //d.id
+   return "q7-9";
+ }
+ 
+ 
+  $( "select" )
+  .change(function () {
+    var str = "";
+    $( "select option:selected" ).each(function() {
+         str =  $(this).text();
+
+    if (str == "Employment") {
+
+        $("#primary").show();
+        $("#secondary").hide();  
+ 
+    } else {  
+         
+        $("#primary").hide();
+        $("#secondary").show();   
+    } 
+  
+    });
+  });
+ 
+ 
+
+</script>
+</body></html>
+
+
