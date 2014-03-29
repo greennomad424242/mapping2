@@ -54,8 +54,8 @@ border-radius: 5px;
 </div>
 <select>
 
-     <option value="Population">Population</option> 
-     <option value="Employment">Employment</option>   
+     <option value="Population">Population Density</option> 
+     <option value="Employment">Unemployment Rate</option>   
 </select>
 
 </div>
@@ -73,7 +73,7 @@ border-radius: 5px;
   var data; // loaded asynchronously
   var data3;
   var data4;
- 
+  var previous_color;
   var dataset =[];  //TO DO: provide useful variable names
   var dataset2 =[];
   var dataset4 =[];
@@ -123,7 +123,16 @@ border-radius: 5px;
     console.log("Loaded ZIP Codes");   
        
     });
-     return deferred2.promise();
+     
+d3.csv("population_density.csv", function(error, data4) {       
+    data4.forEach(function(d) {
+       pop_data.push([d.GEOID,d.NAME,d.POP10,d.SQMI,d.DENSITY]);
+       var key = d.GEOID;
+       data5[key] = d.DENSITY;    
+       
+     }); 
+  }); 
+      return deferred2.promise();
 } 
   
  
@@ -151,8 +160,21 @@ border-radius: 5px;
              var newString = myString.substr(1, myString.length-2); 
              dataset.push([newString,d.County, d.State,1]);
           }); 
-          console.log("Loaded names");   
-             deferred.resolve();
+          console.log("Loaded names"); 
+             
+         for (var q=0, max = dataset.length;  q < max; q++){
+            target_id = dataset[q][0];
+            for (var n = 0, len2 = pop_data.length; n < len2; n++){ 
+               if (pop_data[n][0] === target_id) {
+                     dataset[q][4] = pop_data[n][4];
+                  break;  
+               }    
+                       
+            }        
+                 
+         }           
+                       
+        deferred.resolve();
       });
       
 
@@ -172,7 +194,53 @@ border-radius: 5px;
        .enter()
        .append("svg:path")
        .attr("class",  data5 ? quantize_pop : null)
-       .attr("d", path);
+       .attr("d", path)
+      .on("mouseout", function() {
+          d3.select(this)
+           .transition().duration(100)
+           .style("opacity", 1);
+          div.transition().duration(100)
+           .style("opacity", 0);
+        })
+    .on("mouseover", function(d) {   
+        //previous_color = d3.select(this).attr("fill");
+        
+   
+        
+        
+        var target =  d.id;
+        var rate;
+        var temp;
+        var county_name;
+        // this is the popup tooltip  
+        // find the data for the element that's moused over
+        for(var i = 0, len = dataset.length; i < len; i++){
+           if(dataset[i][0] === d.id){
+            county = dataset[i][1];
+            state = dataset[i][2];
+            rate = dataset[i][4];  
+            popup_text = county + "</span><br>" + rate+ " people per sq mile";
+            break;
+           }
+         }
+         
+         
+                                       
+    d3.select(this)
+       .transition()
+       .duration(100)
+       .style("opacity", 0.5);
+       
+    div.transition()
+       .duration(100)
+       .style("opacity", 1);
+       
+    div.html(popup_text)
+       .style("left", (d3.event.pageX+30) + "px")
+       .style("top", (d3.event.pageY -30) + "px");  
+         
+         
+         });
       
    
    counties.selectAll("path")
@@ -267,26 +335,7 @@ border-radius: 5px;
  
  }).then(function(){
 
-  d3.csv("population_density.csv", function(error, data4) {       
-    data4.forEach(function(d) {
-       pop_data.push([d.GEOID,d.NAME,d.POP10,d.SQMI,d.DENSITY]);
-     });
-     console.log("Population data loaded");
-     
-       for(var i = 0, len = dataset.length; i < len; i++){ 
-        target_id = dataset[i][0];
-         for (var q = 0, len2 = pop_data.length; q < len2; q++){ 
-             if (pop_data[q][0] === target_id) {
-                dataset[i][4] = pop_data[q][4];
-                dataset[i][5] = pop_data[q][3];
-                 var key = target_id;
-                 data5[key] = pop_data[q][4];            
-                break;  
-             }                              
-         }
-       }      
-     
-  });
+
  });
  
  // this loads the SVG for the states 
@@ -326,18 +375,39 @@ function quantize(d) {
  
  
 function quantize_pop(d) {
-     //d.id
-   return "q7-9";
+     
+   var value = data5[d.id];
+    if (value <= 4) {
+        value_find =1;              
+    } else if (value <= 13) {
+        value_find =2;                        
+    } else if (value <= 23) {
+        value_find =3;                        
+    } else if (value <= 33) {
+        value_find =4;                        
+    } else if (value <= 43) {
+        value_find =5;                        
+    } else if (value <= 63) {
+        value_find =6;                        
+    }  else if (value <= 99) {
+        value_find =7;                        
+    } else if (value <= 184) {
+        value_find =8;                        
+    } else {
+       value_find =9;                       
+    }                 
+   return "q" + value_find +  "-9";
  }
  
  
   $( "select" )
   .change(function () {
+        d3.select(".sidebar").html(""); 
     var str = "";
     $( "select option:selected" ).each(function() {
          str =  $(this).text();
 
-    if (str == "Employment") {
+    if (str == "Unemployment Rate") {
 
         $("#primary").show();
         $("#secondary").hide();  
